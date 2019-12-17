@@ -9,14 +9,14 @@ class ContextImplSpec extends Specification {
     def collection
 
     void setup() {
-        def threadDecorator1 = new ThreadDecorator(Mock(Runnable))
-        threadDecorator1.status = Status.IS_FAILED
-        def threadDecorator2 = new ThreadDecorator(Mock(Runnable))
-        threadDecorator2.status = Status.IS_FINISHED
-        def threadDecorator3 = new ThreadDecorator(Mock(Runnable))
-        threadDecorator3.status = Status.IS_INTERRUPTED
-        def threadDecorator4 = new ThreadDecorator(Mock(Runnable))
-        collection = [threadDecorator1, threadDecorator2, threadDecorator3, threadDecorator4]
+        def failed = new ThreadDecorator(Mock(Runnable))
+        failed.status = Status.IS_FAILED
+        def finished = new ThreadDecorator(Mock(Runnable))
+        finished.status = Status.IS_FINISHED
+        def interrupted = new ThreadDecorator(Mock(Runnable))
+        interrupted.status = Status.IS_INTERRUPTED
+        def notStarted = new ThreadDecorator(Mock(Runnable))
+        collection = [failed, finished, interrupted, notStarted]
     }
 
     def "Get all finished, failed and interrupted tasks"() {
@@ -24,37 +24,38 @@ class ContextImplSpec extends Specification {
         def context = new ContextImpl(collection)
 
         when:
-        def completed = context.getCompletedTaskCount()
-        def failed = context.getFailedTaskCount()
-        def interrupted = context.getInterruptedTaskCount()
+        def completedNumber = context.getCompletedTaskCount()
+        def failedNumber = context.getFailedTaskCount()
+        def interruptedNumber = context.getInterruptedTaskCount()
         def isFinished = context.isFinished()
 
         then:
-        completed == 1
-        failed == 1
-        interrupted == 1
+        completedNumber == 1
+        failedNumber == 1
+        interruptedNumber == 1
         !isFinished
 
     }
 
-    def "Interrupt"(){
+    def "Interrupt"() {
         given:
         def context = new ContextImpl(collection)
+        def notStarted = collection[3]
 
         when:
         context.interrupt()
 
         then:
-        collection[3].getStatus() == Status.IS_INTERRUPTED
+        notStarted.getStatus() == Status.IS_INTERRUPTED
     }
 
-    def "Return finished" (){
+    def "Return finished"() {
         given:
-        def threadDecorator2 = new ThreadDecorator(Mock(Runnable))
-        threadDecorator2.status = Status.IS_FINISHED
-        def threadDecorator3 = new ThreadDecorator(Mock(Runnable))
-        threadDecorator3.status = Status.IS_INTERRUPTED
-        def collectionFinished = [threadDecorator2, threadDecorator3]
+        def finished1 = new ThreadDecorator(Mock(Runnable))
+        finished1.status = Status.IS_FINISHED
+        def finished2 = new ThreadDecorator(Mock(Runnable))
+        finished2.status = Status.IS_INTERRUPTED
+        def collectionFinished = [finished1, finished2]
         def context = new ContextImpl(collectionFinished)
 
         when:
@@ -64,7 +65,7 @@ class ContextImplSpec extends Specification {
         result
     }
 
-    def "Get statistics" () {
+    def "Get statistics"() {
         given:
         def threadDecorator2 = new ThreadDecorator(Mock(Runnable))
         threadDecorator2.status = Status.IS_FINISHED
