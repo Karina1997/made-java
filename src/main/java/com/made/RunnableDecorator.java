@@ -31,7 +31,7 @@ public class RunnableDecorator extends Thread {
         if (getStatus() != Status.isInterrupted) {
             StopWatch stopWatch = new StopWatch();
             stopWatch.start();
-            setStatus(Status.isRunning);
+            changeStatus(Status.isRunning);
             try {
                 task.run();
                 stopWatch.stop();

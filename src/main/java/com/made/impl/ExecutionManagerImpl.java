@@ -10,6 +10,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 public class ExecutionManagerImpl implements ExecutionManager {
+
     @Override
     public Context execute(Runnable... tasks) {
         List<RunnableDecorator> runnableTasks = Arrays.stream(tasks)
