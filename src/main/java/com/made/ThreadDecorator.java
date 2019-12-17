@@ -8,7 +8,7 @@ import org.hsqldb.lib.StopWatch;
 @Setter
 @Getter
 @RequiredArgsConstructor
-public class RunnableDecorator extends Thread {
+public class ThreadDecorator extends Thread {
     private int executionTime;
     private Status status = Status.IS_NOT_STARTED;
     private final Runnable task;
@@ -22,7 +22,7 @@ public class RunnableDecorator extends Thread {
         return status;
     }
 
-    private synchronized void setStatus(Status newStatus) {
+    public synchronized void setStatus(Status newStatus) {
         this.status = newStatus;
     }
 
