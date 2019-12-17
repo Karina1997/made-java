@@ -9,36 +9,37 @@ import org.hsqldb.lib.StopWatch;
 @Getter
 @RequiredArgsConstructor
 public class RunnableDecorator extends Thread {
-    int executionTime = -1;
-    private Status status = Status.isNotStarted;
+    private int executionTime;
+    private Status status = Status.IS_NOT_STARTED;
     private final Runnable task;
 
 
     public void interrupt() {
-        changeStatus(Status.isInterrupted);
+        setStatus(Status.IS_INTERRUPTED);
     }
 
     public synchronized Status getStatus() {
         return status;
     }
 
-    private synchronized void changeStatus(Status newStatus) {
+    private synchronized void setStatus(Status newStatus) {
         this.status = newStatus;
     }
 
     @Override
     public void run() {
-        if (getStatus() != Status.isInterrupted) {
+        if (getStatus() != Status.IS_INTERRUPTED) {
             StopWatch stopWatch = new StopWatch();
             stopWatch.start();
-            changeStatus(Status.isRunning);
+            setStatus(Status.IS_RUNNING);
             try {
                 task.run();
-                stopWatch.stop();
-                changeStatus(Status.isFinished);
+                setStatus(Status.IS_FINISHED);
                 executionTime = (int) stopWatch.elapsedTime();
             } catch (Exception e) {
-                changeStatus(Status.isFailed);
+                setStatus(Status.IS_FAILED);
+            } finally {
+                stopWatch.stop();
             }
         }
     }

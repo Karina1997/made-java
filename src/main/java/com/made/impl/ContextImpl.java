@@ -15,35 +15,35 @@ public class ContextImpl implements Context {
     @Override
     public int getCompletedTaskCount() {
         return (int) tasks.stream()
-                .filter(x -> x.getStatus() == Status.isFinished)
+                .filter(x -> x.getStatus() == Status.IS_FINISHED)
                 .count();
     }
 
     @Override
     public int getFailedTaskCount() {
         return (int) tasks.stream()
-                .filter(x -> x.getStatus() == Status.isFailed)
+                .filter(x -> x.getStatus() == Status.IS_FAILED)
                 .count();
     }
 
     @Override
     public int getInterruptedTaskCount() {
         return (int) tasks
-                .stream().filter(x -> x.getStatus() == Status.isInterrupted)
+                .stream().filter(x -> x.getStatus() == Status.IS_INTERRUPTED)
                 .count();
     }
 
     @Override
     public void interrupt() {
         tasks.stream()
-                .filter(x -> x.getStatus() == Status.isNotStarted)
+                .filter(x -> x.getStatus() == Status.IS_NOT_STARTED)
                 .forEach(RunnableDecorator::interrupt);
     }
 
     @Override
     public boolean isFinished() {
         return (int) tasks.stream()
-                .filter(x -> x.getStatus() == Status.isInterrupted || x.getStatus() == Status.isFinished)
+                .filter(x -> x.getStatus() == Status.IS_INTERRUPTED || x.getStatus() == Status.IS_FINISHED)
                 .count() == tasks.size();
     }
 
@@ -59,7 +59,7 @@ public class ContextImpl implements Context {
     @Override
     public ExecutionStatistics getStatistics() {
         int[] times = tasks.stream()
-                .filter(x -> x.getStatus() == Status.isFinished)
+                .filter(x -> x.getStatus() == Status.IS_FINISHED)
                 .map(RunnableDecorator::getExecutionTime)
                 .mapToInt(x -> x)
                 .toArray();
@@ -70,7 +70,7 @@ public class ContextImpl implements Context {
     @Override
     public void awaitTermination() {
         for (RunnableDecorator x : tasks) {
-            if (x.getStatus() == Status.isRunning) {
+            if (x.getStatus() == Status.IS_RUNNING) {
                 try {
                     x.join();
                 } catch (InterruptedException e) {

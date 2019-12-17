@@ -1,11 +1,12 @@
 package com.made.impl;
 
 import com.made.ExecutionStatistics;
+import lombok.AllArgsConstructor;
 import lombok.RequiredArgsConstructor;
 
 import java.util.Arrays;
 
-@RequiredArgsConstructor
+@AllArgsConstructor
 public class ExecutionStatisticsImpl implements ExecutionStatistics {
     private final int[] times;
 

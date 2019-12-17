@@ -1,5 +1,9 @@
 package com.made;
 
 public enum Status {
-    isNotStarted, isFinished, isRunning, isFailed, isInterrupted;
+    IS_NOT_STARTED,
+    IS_FINISHED,
+    IS_RUNNING,
+    IS_FAILED,
+    IS_INTERRUPTED
 }
