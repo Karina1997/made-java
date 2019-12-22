@@ -2,13 +2,11 @@ package com.made;
 
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
-import lombok.Setter;
 import org.hsqldb.lib.StopWatch;
 
-@Setter
 @Getter
 @RequiredArgsConstructor
-public class ThreadDecorator extends Thread {
+public class ThreadWithStatus extends Thread {
     private int executionTime;
     private Status status = Status.IS_NOT_STARTED;
     private final Runnable task;

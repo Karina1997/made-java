@@ -2,49 +2,50 @@ package com.made.impl;
 
 import com.made.Context;
 import com.made.ExecutionStatistics;
-import com.made.ThreadDecorator;
 import com.made.Status;
+import com.made.ThreadWithStatus;
 import lombok.AllArgsConstructor;
 
 import java.util.Collection;
+import java.util.function.Predicate;
 
 @AllArgsConstructor
 public class ContextImpl implements Context {
-    private Collection<ThreadDecorator> tasks;
+    private Collection<ThreadWithStatus> tasks;
 
     @Override
     public int getCompletedTaskCount() {
-        return (int) tasks.stream()
-                .filter(x -> x.getStatus() == Status.IS_FINISHED)
-                .count();
+        return getCount(x -> x.getStatus() == Status.IS_FINISHED);
     }
 
     @Override
     public int getFailedTaskCount() {
-        return (int) tasks.stream()
-                .filter(x -> x.getStatus() == Status.IS_FAILED)
-                .count();
+        return getCount(x -> x.getStatus() == Status.IS_FAILED);
     }
 
     @Override
     public int getInterruptedTaskCount() {
-        return (int) tasks
-                .stream().filter(x -> x.getStatus() == Status.IS_INTERRUPTED)
-                .count();
+        return getCount(x -> x.getStatus() == Status.IS_INTERRUPTED);
     }
+
 
     @Override
     public void interrupt() {
         tasks.stream()
                 .filter(x -> x.getStatus() == Status.IS_NOT_STARTED)
-                .forEach(ThreadDecorator::interrupt);
+                .forEach(ThreadWithStatus::interrupt);
     }
 
     @Override
     public boolean isFinished() {
-        return (int) tasks.stream()
-                .filter(x -> x.getStatus() == Status.IS_INTERRUPTED || x.getStatus() == Status.IS_FINISHED)
-                .count() == tasks.size();
+        return getCount(x -> x.getStatus() == Status.IS_INTERRUPTED || x.getStatus() == Status.IS_FINISHED) == tasks.size();
+    }
+
+    private int getCount(Predicate<ThreadWithStatus> filter) {
+        return (int) tasks
+                .stream()
+                .filter(filter)
+                .count();
     }
 
     @Override
@@ -60,7 +61,7 @@ public class ContextImpl implements Context {
     public ExecutionStatistics getStatistics() {
         int[] times = tasks.stream()
                 .filter(x -> x.getStatus() == Status.IS_FINISHED)
-                .map(ThreadDecorator::getExecutionTime)
+                .map(ThreadWithStatus::getExecutionTime)
                 .mapToInt(x -> x)
                 .toArray();
 
@@ -69,7 +70,7 @@ public class ContextImpl implements Context {
 
     @Override
     public void awaitTermination() {
-        for (ThreadDecorator x : tasks) {
+        for (ThreadWithStatus x : tasks) {
             if (x.getStatus() == Status.IS_RUNNING) {
                 try {
                     x.join();

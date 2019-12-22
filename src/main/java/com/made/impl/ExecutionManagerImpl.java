@@ -2,7 +2,7 @@ package com.made.impl;
 
 import com.made.Context;
 import com.made.ExecutionManager;
-import com.made.ThreadDecorator;
+import com.made.ThreadWithStatus;
 
 import java.util.Arrays;
 import java.util.List;
@@ -12,10 +12,10 @@ public class ExecutionManagerImpl implements ExecutionManager {
 
     @Override
     public Context execute(Runnable... tasks) {
-        List<ThreadDecorator> runnableTasks = Arrays.stream(tasks)
-                .map(ThreadDecorator::new)
+        List<ThreadWithStatus> runnableTasks = Arrays.stream(tasks)
+                .map(ThreadWithStatus::new)
                 .collect(Collectors.toList());
-        runnableTasks.forEach(ThreadDecorator::start);
+        runnableTasks.forEach(ThreadWithStatus::start);
         return new ContextImpl(runnableTasks);
     }
 }

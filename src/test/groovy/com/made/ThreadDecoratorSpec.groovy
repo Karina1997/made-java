@@ -6,7 +6,7 @@ class ThreadDecoratorSpec extends Specification {
     def "Run"() {
         given:
         def runnable = Mock(Runnable)
-        def threadDecorator = new ThreadDecorator(runnable)
+        def threadDecorator = new ThreadWithStatus(runnable)
 
         when:
         threadDecorator.run()
@@ -19,7 +19,7 @@ class ThreadDecoratorSpec extends Specification {
     def "Run with exception"() {
         given:
         def runnable = Mock(Runnable)
-        def threadDecorator = new ThreadDecorator(runnable)
+        def threadDecorator = new ThreadWithStatus(runnable)
 
         when:
         threadDecorator.run()
